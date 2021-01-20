@@ -9,9 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const types_1 = require("./types");
+exports.FreeStuffApi = exports.GameFlag = exports.PartnerEndpoint = exports.Endpoint = void 0;
 const axios_1 = require("axios");
 const os_1 = require("os");
+var Endpoint;
+(function (Endpoint) {
+    Endpoint["PING"] = "GET /ping";
+    Endpoint["GAME_LIST"] = "GET /games/%s";
+    Endpoint["GAME_DETAILS"] = "GET /game/%s/%s";
+})(Endpoint = exports.Endpoint || (exports.Endpoint = {}));
+var PartnerEndpoint;
+(function (PartnerEndpoint) {
+    PartnerEndpoint["STATUS"] = "POST /status";
+    PartnerEndpoint["GAME_ANALYTICS"] = "POST /game/%s/analytics";
+})(PartnerEndpoint = exports.PartnerEndpoint || (exports.PartnerEndpoint = {}));
+var GameFlag;
+(function (GameFlag) {
+    GameFlag[GameFlag["TRASH"] = 1] = "TRASH";
+    GameFlag[GameFlag["THIRDPARTY"] = 2] = "THIRDPARTY";
+})(GameFlag = exports.GameFlag || (exports.GameFlag = {}));
+//#endregion
 class FreeStuffApi {
     //#region constructor
     constructor(settings) {
@@ -101,7 +118,7 @@ class FreeStuffApi {
     //#region PING
     ping() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.makeRequest(types_1.Endpoint.PING);
+            return this.makeRequest(Endpoint.PING);
         });
     }
     getGameList(category, useCache = true) {
@@ -114,7 +131,7 @@ class FreeStuffApi {
                 if (this.gameList_cacheData[category] && (Date.now() - this.gameList_cacheUpdate[category] < this.settings.cacheTtl.gameList))
                     return this.gameList_cacheData[category];
             }
-            const data = yield this.makeRequest(types_1.Endpoint.GAME_LIST, null, category);
+            const data = yield this.makeRequest(Endpoint.GAME_LIST, null, category);
             const rlm = this.rateLimitMeta(data._headers);
             this.gameList_ratesRemaining = rlm.remaining;
             this.gameList_ratesReset = rlm.reset;
@@ -152,7 +169,7 @@ class FreeStuffApi {
                 else
                     requestStack.push([game]);
             }
-            const raw = (yield Promise.all(requestStack.map(q => this.makeRequest(types_1.Endpoint.GAME_DETAILS, null, q.join('+'), lookup))));
+            const raw = (yield Promise.all(requestStack.map(q => this.makeRequest(Endpoint.GAME_DETAILS, null, q.join('+'), lookup))));
             for (const res of raw) {
                 for (const id of Object.keys(res.data || {})) {
                     let object = (_a = (res.data && res.data[id])) !== null && _a !== void 0 ? _a : null;
@@ -187,7 +204,7 @@ class FreeStuffApi {
                 data, suid, status, service, version,
                 server: servername
             };
-            const res = yield this.makeRequest(types_1.PartnerEndpoint.STATUS, body);
+            const res = yield this.makeRequest(PartnerEndpoint.STATUS, body);
             if (res === null || res === void 0 ? void 0 : res.data['events'])
                 res === null || res === void 0 ? void 0 : res.data['events'].forEach(e => this.emitRawEvent(e));
             return res;
@@ -202,7 +219,7 @@ class FreeStuffApi {
                 suid: this.settings.sid,
                 data
             };
-            return this.makeRequest(types_1.PartnerEndpoint.GAME_ANALYTICS, body, game + '');
+            return this.makeRequest(PartnerEndpoint.GAME_ANALYTICS, body, game + '');
         });
     }
     on(event, handler) {
@@ -233,5 +250,5 @@ class FreeStuffApi {
         }
     }
 }
-exports.default = FreeStuffApi;
+exports.FreeStuffApi = FreeStuffApi;
 //# sourceMappingURL=index.js.map
