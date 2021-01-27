@@ -205,8 +205,8 @@ class FreeStuffApi {
                 server: servername
             };
             const res = yield this.makeRequest(PartnerEndpoint.STATUS, body);
-            if (res === null || res === void 0 ? void 0 : res.data['events'])
-                res === null || res === void 0 ? void 0 : res.data['events'].forEach(e => this.emitRawEvent(e));
+            if ((res === null || res === void 0 ? void 0 : res.data) && (res === null || res === void 0 ? void 0 : res.data['events']))
+                res.data['events'].forEach(e => this.emitRawEvent(e));
             return res;
         });
     }

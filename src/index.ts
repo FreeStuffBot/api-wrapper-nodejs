@@ -304,8 +304,8 @@ export class FreeStuffApi {
 
     const res = await this.makeRequest(PartnerEndpoint.STATUS, body)
 
-    if (res?.data['events'])
-      res?.data['events'].forEach(e => this.emitRawEvent(e))
+    if (res?.data && res?.data['events'])
+      res.data['events'].forEach(e => this.emitRawEvent(e))
 
     return res
   }
