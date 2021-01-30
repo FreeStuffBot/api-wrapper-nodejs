@@ -136,7 +136,7 @@ export class FreeStuffApi {
     }
   }
 
-  public async makeRequest(endpoint: Endpoint | PartnerEndpoint | string, body?: any, ...args: string[]): Promise<RawApiResponse> {
+  public async makeRequest(endpoint: Endpoint | PartnerEndpoint | string, body?: any, query?: any, ...args: string[]): Promise<RawApiResponse> {
     let url = this.settings.baseUrl
     let method = 'GET'
     
@@ -149,6 +149,13 @@ export class FreeStuffApi {
 
     for (const arg of args)
       url = url.replace('%s', arg)
+
+    if (query && Object.keys(query).length) {
+      const append = []
+      for (const key in query)
+        append.push(`${key}=${query[key]}`)
+      url += `?${append.join('=')}`
+    }
 
     if (!['GET', 'POST', 'PUT', 'DELETE'].includes(method.toUpperCase()))
       throw new Error(`FreeStuffApi Error. ${method} is not a valid http request method.`)
@@ -204,7 +211,7 @@ export class FreeStuffApi {
         return this.gameList_cacheData[category]
     }
 
-    const data = await this.makeRequest(Endpoint.GAME_LIST, null, category)
+    const data = await this.makeRequest(Endpoint.GAME_LIST, null, {}, category)
     const rlm = this.rateLimitMeta(data._headers)
     this.gameList_ratesRemaining = rlm.remaining
     this.gameList_ratesReset = rlm.reset
@@ -223,13 +230,18 @@ export class FreeStuffApi {
   private gameDetails_ratesReset = 0
 
   /** @access PUBLIC */
-  public async getGameDetails(games: number[], lookup: 'info', useCache?: boolean): Promise<{ [id: string]: GameInfo }>
+  public async getGameDetails(games: number[], lookup: 'info', settings?: { language?: string[] }, useCache?: boolean): Promise<{ [id: string]: GameInfo }>
   /** @access PARTNER ONLY */
-  public async getGameDetails(games: number[], lookup: 'analytics', useCache?: boolean): Promise<{ [id: string]: GameAnalytics }>
+  public async getGameDetails(games: number[], lookup: 'analytics', settings?: any, useCache?: boolean): Promise<{ [id: string]: GameAnalytics }>
   /** @access PARTNER ONLY */
-  public async getGameDetails(games: number[], lookup: 'all', useCache?: boolean): Promise<{ [id: string]: any }>
-  public async getGameDetails(games: number[], lookup: 'info' | 'analytics' | 'all', useCache = true): Promise<{ [id: string]: any }> {
-    const out = { }
+  public async getGameDetails(games: number[], lookup: 'all', settings?: any, useCache?: boolean): Promise<{ [id: string]: any }>
+  public async getGameDetails(games: number[], lookup: 'info' | 'analytics' | 'all', settings: any = {}, useCache = true): Promise<{ [id: string]: any }> {
+    const out = { } as any
+    const query = { } as any
+
+    if (settings.language) {
+      query.lang = settings.language.join('+')
+    }
 
     if (!games.length) return out
     if (lookup != 'info' && this.settings.type != 'partner')
@@ -248,7 +260,7 @@ export class FreeStuffApi {
     if (!games.length) return out
 
     if (this.gameDetails_ratesRemaining == 0 && (Date.now() - this.gameDetails_ratesReset < 0)) {
-      return new Promise((res) => setTimeout(() => res(this.getGameDetails(games, <'info'> lookup, useCache)), this.gameDetails_ratesReset - Date.now()))
+      return new Promise((res) => setTimeout(() => res(this.getGameDetails(games, <'info'> lookup, settings, useCache)), this.gameDetails_ratesReset - Date.now()))
     }
 
     const requestStack = [[]]
@@ -259,7 +271,7 @@ export class FreeStuffApi {
         requestStack.push([game])
     }
 
-    const raw = (await Promise.all(requestStack.map(q => this.makeRequest(Endpoint.GAME_DETAILS, null, q.join('+'), lookup))))
+    const raw = (await Promise.all(requestStack.map(q => this.makeRequest(Endpoint.GAME_DETAILS, null, query, q.join('+'), lookup))))
 
     for (const res of raw) {
       for (const id of Object.keys(<any> res.data || {})) {
@@ -327,7 +339,7 @@ export class FreeStuffApi {
       data
     }
 
-    return this.makeRequest(PartnerEndpoint.GAME_ANALYTICS, body, game + '')
+    return this.makeRequest(PartnerEndpoint.GAME_ANALYTICS, body, {}, game + '')
   }
 
   //#endregion

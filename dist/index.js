@@ -72,7 +72,7 @@ class FreeStuffApi {
                 : `Partner ${this.settings.key} ${this.settings.sid}`
         };
     }
-    makeRequest(endpoint, body, ...args) {
+    makeRequest(endpoint, body, query, ...args) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             let url = this.settings.baseUrl;
@@ -86,6 +86,13 @@ class FreeStuffApi {
             }
             for (const arg of args)
                 url = url.replace('%s', arg);
+            if (query && Object.keys(query).length) {
+                const append = [];
+                for (const key in query)
+                    append.push(`${key}=${query[key]}`);
+                url += `?${append.join('=')}`;
+            }
+            console.log(url);
             if (!['GET', 'POST', 'PUT', 'DELETE'].includes(method.toUpperCase()))
                 throw new Error(`FreeStuffApi Error. ${method} is not a valid http request method.`);
             let conf = [{ headers: this.getHeaders() }];
@@ -131,7 +138,7 @@ class FreeStuffApi {
                 if (this.gameList_cacheData[category] && (Date.now() - this.gameList_cacheUpdate[category] < this.settings.cacheTtl.gameList))
                     return this.gameList_cacheData[category];
             }
-            const data = yield this.makeRequest(Endpoint.GAME_LIST, null, category);
+            const data = yield this.makeRequest(Endpoint.GAME_LIST, null, {}, category);
             const rlm = this.rateLimitMeta(data._headers);
             this.gameList_ratesRemaining = rlm.remaining;
             this.gameList_ratesReset = rlm.reset;
@@ -140,10 +147,14 @@ class FreeStuffApi {
             return (_a = data.data) !== null && _a !== void 0 ? _a : [];
         });
     }
-    getGameDetails(games, lookup, useCache = true) {
+    getGameDetails(games, lookup, settings = {}, useCache = true) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const out = {};
+            const query = {};
+            if (settings.language) {
+                query.lang = settings.language.join('+');
+            }
             if (!games.length)
                 return out;
             if (lookup != 'info' && this.settings.type != 'partner')
@@ -160,7 +171,7 @@ class FreeStuffApi {
             if (!games.length)
                 return out;
             if (this.gameDetails_ratesRemaining == 0 && (Date.now() - this.gameDetails_ratesReset < 0)) {
-                return new Promise((res) => setTimeout(() => res(this.getGameDetails(games, lookup, useCache)), this.gameDetails_ratesReset - Date.now()));
+                return new Promise((res) => setTimeout(() => res(this.getGameDetails(games, lookup, settings, useCache)), this.gameDetails_ratesReset - Date.now()));
             }
             const requestStack = [[]];
             for (const game of games) {
@@ -169,7 +180,7 @@ class FreeStuffApi {
                 else
                     requestStack.push([game]);
             }
-            const raw = (yield Promise.all(requestStack.map(q => this.makeRequest(Endpoint.GAME_DETAILS, null, q.join('+'), lookup))));
+            const raw = (yield Promise.all(requestStack.map(q => this.makeRequest(Endpoint.GAME_DETAILS, null, query, q.join('+'), lookup))));
             for (const res of raw) {
                 for (const id of Object.keys(res.data || {})) {
                     let object = (_a = (res.data && res.data[id])) !== null && _a !== void 0 ? _a : null;
@@ -219,7 +230,7 @@ class FreeStuffApi {
                 suid: this.settings.sid,
                 data
             };
-            return this.makeRequest(PartnerEndpoint.GAME_ANALYTICS, body, game + '');
+            return this.makeRequest(PartnerEndpoint.GAME_ANALYTICS, body, {}, game + '');
         });
     }
     on(event, handler) {

@@ -82,7 +82,7 @@ export declare class FreeStuffApi {
     private settings;
     constructor(settings: FreeStuffApiSettings);
     private getHeaders;
-    makeRequest(endpoint: Endpoint | PartnerEndpoint | string, body?: any, ...args: string[]): Promise<RawApiResponse>;
+    makeRequest(endpoint: Endpoint | PartnerEndpoint | string, body?: any, query?: any, ...args: string[]): Promise<RawApiResponse>;
     private rateLimitMeta;
     ping(): Promise<RawApiResponse>;
     private gameList_cacheData;
@@ -95,15 +95,17 @@ export declare class FreeStuffApi {
     private gameDetails_ratesRemaining;
     private gameDetails_ratesReset;
     /** @access PUBLIC */
-    getGameDetails(games: number[], lookup: 'info', useCache?: boolean): Promise<{
+    getGameDetails(games: number[], lookup: 'info', settings?: {
+        language?: string[];
+    }, useCache?: boolean): Promise<{
         [id: string]: GameInfo;
     }>;
     /** @access PARTNER ONLY */
-    getGameDetails(games: number[], lookup: 'analytics', useCache?: boolean): Promise<{
+    getGameDetails(games: number[], lookup: 'analytics', settings?: any, useCache?: boolean): Promise<{
         [id: string]: GameAnalytics;
     }>;
     /** @access PARTNER ONLY */
-    getGameDetails(games: number[], lookup: 'all', useCache?: boolean): Promise<{
+    getGameDetails(games: number[], lookup: 'all', settings?: any, useCache?: boolean): Promise<{
         [id: string]: any;
     }>;
     /** @access PARTNER ONLY */
