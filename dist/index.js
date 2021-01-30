@@ -92,7 +92,6 @@ class FreeStuffApi {
                     append.push(`${key}=${query[key]}`);
                 url += `?${append.join('=')}`;
             }
-            console.log(url);
             if (!['GET', 'POST', 'PUT', 'DELETE'].includes(method.toUpperCase()))
                 throw new Error(`FreeStuffApi Error. ${method} is not a valid http request method.`);
             let conf = [{ headers: this.getHeaders() }];

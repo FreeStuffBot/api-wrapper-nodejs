@@ -38,6 +38,23 @@ export interface RawApiResponse {
   _status: number
 }
 
+export interface LocalizedGameInfo {
+  lang_name: string,
+  lang_name_en: string,
+  lang_flag_emoji: string,
+  platform: string,
+  claim_long: string,
+  claim_short: string,
+  free: string,
+  header: string,
+  footer: string,
+  org_price_eur: string,
+  org_price_usd: string,
+  until: string,
+  until_alt: string,
+  flags: string[]
+}
+
 export interface GameInfo {
   id: number;
   url: string
@@ -58,6 +75,10 @@ export interface GameInfo {
   type: AnnouncementType
   store_meta: {
     steam_subids: string
+  },
+  localized?: {
+    'en-US': LocalizedGameInfo,
+    [key: string]: LocalizedGameInfo
   }
 }
 
