@@ -56,7 +56,7 @@ export interface LocalizedGameInfo {
 }
 
 export interface GameInfo {
-  id: number;
+  id: number
   url: string
   org_url: string
   title: string
@@ -68,7 +68,17 @@ export interface GameInfo {
     euro: number
     dollar: number
   }
-  thumbnail: string
+  thumbnail: {
+    org: string
+    blank: string
+    full: string
+    tags: string
+  }
+  kind: ProductKind
+  tags: string[]
+  description: string
+  rating?: number
+  notice?: string
   until: Date
   store: Store
   flags: GameFlags
@@ -77,7 +87,7 @@ export interface GameInfo {
     steam_subids: string
   },
   localized?: {
-    'en-US': LocalizedGameInfo,
+    'en-US': LocalizedGameInfo
     [key: string]: LocalizedGameInfo
   }
 }
@@ -93,6 +103,8 @@ export type GameFlags = number
 export type Store = 'steam' | 'epic' | 'humble' | 'gog' | 'origin' | 'uplay' | 'twitch' | 'itch' | 'discord' | 'apple' | 'google' | 'switch' | 'ps' | 'xbox' | 'other'
 
 export type AnnouncementType = 'free' | 'weekend' | 'discount' | 'ad' | 'unknown'
+
+export type ProductKind = 'game' | 'dlc' | 'software' | 'art' | 'ost' | 'book' | 'other'
 
 export interface GameAnalytics {
   discord: GameAnalyticsDiscord
