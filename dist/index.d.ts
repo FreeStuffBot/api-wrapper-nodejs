@@ -58,7 +58,17 @@ export interface GameInfo {
         euro: number;
         dollar: number;
     };
-    thumbnail: string;
+    thumbnail: {
+        org: string;
+        blank: string;
+        full: string;
+        tags: string;
+    };
+    kind: ProductKind;
+    tags: string[];
+    description: string;
+    rating?: number;
+    notice?: string;
     until: Date;
     store: Store;
     flags: GameFlags;
@@ -79,6 +89,7 @@ export declare enum GameFlag {
 export declare type GameFlags = number;
 export declare type Store = 'steam' | 'epic' | 'humble' | 'gog' | 'origin' | 'uplay' | 'twitch' | 'itch' | 'discord' | 'apple' | 'google' | 'switch' | 'ps' | 'xbox' | 'other';
 export declare type AnnouncementType = 'free' | 'weekend' | 'discount' | 'ad' | 'unknown';
+export declare type ProductKind = 'game' | 'dlc' | 'software' | 'art' | 'ost' | 'book' | 'other';
 export interface GameAnalytics {
     discord: GameAnalyticsDiscord;
     telegram: GameAnalyticsTelegram;
