@@ -12,6 +12,7 @@ export type FreeStuffApiSettings = ({
 }) & {
   key: string,
   baseUrl?: string,
+  websocketSecret?: string,
   cacheTtl?: {
     gameList?: number,
     gameDetails?: number
@@ -412,6 +413,14 @@ export class FreeStuffApi {
       default: orElse && orElse(event)
     }
   }
+
+  // public webhook() {
+  //   const api = this
+  //   return (req: any, res: any) => {
+  //     if (req.body) // todo body parser
+  //     api.emitRawEvent()
+  //   }
+  // }
   //#endregion
 
 }
