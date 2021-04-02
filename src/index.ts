@@ -414,13 +414,17 @@ export class FreeStuffApi {
     }
   }
 
-  // public webhook() {
-  //   const api = this
-  //   return (req: any, res: any) => {
-  //     if (req.body) // todo body parser
-  //     api.emitRawEvent()
-  //   }
-  // }
+  public webhook() {
+    const api = this
+    return (req: any, res: any) => {
+      if (api.settings.websocketSecret) {
+        if (!req.body?.secret || req.body.secret !== api.settings.websocketSecret)
+          return res.status(400).end()
+      }
+      api.emitRawEvent(req.body)
+      res.status(200).end()
+    }
+  }
   //#endregion
 
 }

@@ -4,7 +4,7 @@ This is the official NodeJS API wrapper for the FreeStuff API. For more informat
 
 ## Docs
 
-> This api wrapper has typescript typings included. Your editor should show smart tooltips and autocomplete even if you are using vanialla javascript.
+> This api wrapper has typescript typings included. Your editor should show smart tooltips and autocomplete even if you are using vanilla javascript.
 
 First, import the api using
 ```js
@@ -118,4 +118,40 @@ LocalizedGameInfo: {
 
 For more info about the Object types see https://docs.freestuffbot.xyz/v1/types#gameinfo
 
+#### To subscribe to events you can use the api.on method:
+```js
+fsapi.on('free_games', games => {
+// games = [ 1234, 12345 ]
+})
+```
 
+In order to actually receive those events though, you have 3 options:
+* get partner privileges (very unlikely)
+* call emit event function manually:
+```js
+  fsapi.emitRawEvent({ event: 'free_games', data: [ 1234 ] })
+```
+* or use the express middleware if your server is running on express.js already:
+```js
+express.use(express.json())
+express.get('route/to/your/websocket/', fsapi.webhook())
+```
+
+#### Full example of all the components above:
+
+```js
+const FreeStuffApi = require('freestuff')
+const fsapi = new FreeStuffApi({
+  key: 'sdjalsdkjlaksdjlkaj',
+  websocketSecret: 'cvmbnmncvbnm'
+})
+
+fsapi.on('free_games', async games => {
+  const info = await fsapi.getGameDetails(games, 'info', { language:['en-US' ] })
+
+  console.log(info)
+})
+
+server.use(express.json())
+server.get('/websocket/', fsapi.websocket())
+```
