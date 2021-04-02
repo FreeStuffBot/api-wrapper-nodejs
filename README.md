@@ -126,7 +126,6 @@ fsapi.on('free_games', games => {
 ```
 
 In order to actually receive those events though, you have 3 options:
-* get partner privileges (very unlikely)
 * call emit event function manually:
 ```js
   fsapi.emitRawEvent({ event: 'free_games', data: [ 1234 ] })
@@ -136,6 +135,7 @@ In order to actually receive those events though, you have 3 options:
 express.use(express.json())
 express.get('route/to/your/websocket/', fsapi.webhook())
 ```
+* post status updates. only if you have partner privileges
 
 #### Full example of all the components above:
 
