@@ -58,8 +58,14 @@ export interface LocalizedGameInfo {
 
 export interface GameInfo {
   id: number
-  url: string
-  org_url: string
+  urls: {
+    default: string,
+    browser: string,
+    client?: string,
+    org: string
+  }
+  /** @deprecated */ url: string
+  /** @deprecated */ org_url: string
   title: string
   org_price: {
     euro: number
