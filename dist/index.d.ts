@@ -7,6 +7,7 @@ export declare type FreeStuffApiSettings = ({
 }) & {
     key: string;
     baseUrl?: string;
+    websocketSecret?: string;
     cacheTtl?: {
         gameList?: number;
         gameDetails?: number;
@@ -47,8 +48,14 @@ export interface LocalizedGameInfo {
 }
 export interface GameInfo {
     id: number;
-    url: string;
-    org_url: string;
+    urls: {
+        default: string;
+        browser: string;
+        client?: string;
+        org: string;
+    };
+    /** @deprecated */ url: string;
+    /** @deprecated */ org_url: string;
     title: string;
     org_price: {
         euro: number;
@@ -157,4 +164,5 @@ export declare class FreeStuffApi {
         event: string;
         data: any;
     }) => any): void;
+    webhook(): (req: any, res: any) => any;
 }

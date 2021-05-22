@@ -387,8 +387,8 @@ export class FreeStuffApi {
   //#region event system
   private listener: Map<string, ((...data: any) => any)[]> = new Map()
 
+  public on(event: 'webhook_test', handler: () => any)
   public on(event: 'free_games', handler: (ids: number[]) => any)
-  public on(event: 'operation', handler: (command: string, args: string[]) => any)
   public on(event: string, handler: (...data: any) => any) {
     if (this.listener.has(event))
       this.listener.get(event).push(handler)
@@ -412,8 +412,8 @@ export class FreeStuffApi {
         this.emitEvent('free_games', event.data)
         break
 
-      case 'operation':
-        this.emitEvent('operation', event.data.command, event.data.arguments)
+      case 'webhook_test':
+        this.emitEvent('webhook_test')
         break
 
       default: orElse && orElse(event)

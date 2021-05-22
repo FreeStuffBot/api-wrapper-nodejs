@@ -259,6 +259,18 @@ class FreeStuffApi {
             default: orElse && orElse(event);
         }
     }
+    webhook() {
+        const api = this;
+        return (req, res) => {
+            var _a;
+            if (api.settings.websocketSecret) {
+                if (!((_a = req.body) === null || _a === void 0 ? void 0 : _a.secret) || req.body.secret !== api.settings.websocketSecret)
+                    return res.status(400).end();
+            }
+            api.emitRawEvent(req.body);
+            res.status(200).end();
+        };
+    }
 }
 exports.FreeStuffApi = FreeStuffApi;
 //# sourceMappingURL=index.js.map
