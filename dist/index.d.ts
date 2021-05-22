@@ -7,7 +7,7 @@ export declare type FreeStuffApiSettings = ({
 }) & {
     key: string;
     baseUrl?: string;
-    websocketSecret?: string;
+    webhookSecret?: string;
     cacheTtl?: {
         gameList?: number;
         gameDetails?: number;
@@ -54,8 +54,6 @@ export interface GameInfo {
         client?: string;
         org: string;
     };
-    /** @deprecated */ url: string;
-    /** @deprecated */ org_url: string;
     title: string;
     org_price: {
         euro: number;

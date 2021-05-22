@@ -263,8 +263,8 @@ class FreeStuffApi {
         const api = this;
         return (req, res) => {
             var _a;
-            if (api.settings.websocketSecret) {
-                if (!((_a = req.body) === null || _a === void 0 ? void 0 : _a.secret) || req.body.secret !== api.settings.websocketSecret)
+            if (api.settings.webhookSecret) {
+                if (!((_a = req.body) === null || _a === void 0 ? void 0 : _a.secret) || req.body.secret !== api.settings.webhookSecret)
                     return res.status(400).end();
             }
             api.emitRawEvent(req.body);
