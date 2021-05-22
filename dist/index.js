@@ -253,8 +253,8 @@ class FreeStuffApi {
             case 'free_games':
                 this.emitEvent('free_games', event.data);
                 break;
-            case 'operation':
-                this.emitEvent('operation', event.data.command, event.data.arguments);
+            case 'webhook_test':
+                this.emitEvent('webhook_test');
                 break;
             default: orElse && orElse(event);
         }

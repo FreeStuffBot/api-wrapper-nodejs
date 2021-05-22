@@ -12,7 +12,7 @@ export type FreeStuffApiSettings = ({
 }) & {
   key: string,
   baseUrl?: string,
-  websocketSecret?: string,
+  webhookSecret?: string,
   cacheTtl?: {
     gameList?: number,
     gameDetails?: number
@@ -64,8 +64,6 @@ export interface GameInfo {
     client?: string,
     org: string
   }
-  /** @deprecated */ url: string
-  /** @deprecated */ org_url: string
   title: string
   org_price: {
     euro: number
@@ -423,8 +421,8 @@ export class FreeStuffApi {
   public webhook() {
     const api = this
     return (req: any, res: any) => {
-      if (api.settings.websocketSecret) {
-        if (!req.body?.secret || req.body.secret !== api.settings.websocketSecret)
+      if (api.settings.webhookSecret) {
+        if (!req.body?.secret || req.body.secret !== api.settings.webhookSecret)
           return res.status(400).end()
       }
       api.emitRawEvent(req.body)

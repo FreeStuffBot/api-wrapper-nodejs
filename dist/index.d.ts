@@ -153,8 +153,8 @@ export declare class FreeStuffApi {
     postGameAnalytics(game: number, service: 'telegram', data: GameAnalyticsTelegram): Promise<RawApiResponse>;
     postGameAnalytics(game: number, service: string, data: any): Promise<RawApiResponse>;
     private listener;
+    on(event: 'webhook_test', handler: () => any): any;
     on(event: 'free_games', handler: (ids: number[]) => any): any;
-    on(event: 'operation', handler: (command: string, args: string[]) => any): any;
     unregisterEventHandler(event?: string): void;
     emitEvent(event: string, ...data: any): void;
     emitRawEvent(event: {
