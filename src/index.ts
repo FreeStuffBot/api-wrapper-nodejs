@@ -71,7 +71,8 @@ export interface GameInfo {
   }
   price: {
     euro: number
-    dollar: number
+    usd: number
+    [currency: string]: number
   }
   thumbnail: {
     org: string
@@ -146,7 +147,7 @@ export class FreeStuffApi {
       this.settings.type = 'basic'
 
     if (!this.settings.baseUrl)
-      this.settings.baseUrl = 'https://management.freestuffbot.xyz/api/v1'
+      this.settings.baseUrl = 'https://api.freestuffbot.xyz/v1'
 
     if (!this.settings.cacheTtl) {
       this.settings.cacheTtl = {
