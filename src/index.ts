@@ -67,7 +67,8 @@ export interface GameInfo {
   title: string
   org_price: {
     euro: number
-    dollar: number
+    usd: number
+    [currency: string]: number
   }
   price: {
     euro: number
