@@ -61,7 +61,8 @@ export interface GameInfo {
     };
     price: {
         euro: number;
-        dollar: number;
+        usd: number;
+        [currency: string]: number;
     };
     thumbnail: {
         org: string;

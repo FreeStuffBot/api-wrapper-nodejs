@@ -51,7 +51,7 @@ class FreeStuffApi {
         if (!this.settings.type)
             this.settings.type = 'basic';
         if (!this.settings.baseUrl)
-            this.settings.baseUrl = 'https://management.freestuffbot.xyz/api/v1';
+            this.settings.baseUrl = 'https://api.freestuffbot.xyz/v1';
         if (!this.settings.cacheTtl) {
             this.settings.cacheTtl = {
                 gameDetails: 1000 * 60 * 60 * 24,
