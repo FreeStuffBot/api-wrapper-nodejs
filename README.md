@@ -10,7 +10,7 @@ First, import the api using
 ```js
 import { FreeStuffApi } from "freestuff"
 // or
-const FreeStuffApi = require('freestuff')
+const { FreeStuffApi } = require('freestuff')
 ```
 
 Then you're ready to create a new connection to the api
