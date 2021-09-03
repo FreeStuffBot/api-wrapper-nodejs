@@ -68,12 +68,22 @@ export interface GameInfo {
   org_price: {
     euro: number
     usd: number
-    [currency: string]: number
+    gbp: number
+    brl: number
+    bgn: number
+    pln: number
+    huf: number
+    btc: number
   }
   price: {
     euro: number
     usd: number
-    [currency: string]: number
+    gbp: number
+    brl: number
+    bgn: number
+    pln: number
+    huf: number
+    btc: number
   }
   thumbnail: {
     org: string
