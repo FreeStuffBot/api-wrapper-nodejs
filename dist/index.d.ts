@@ -1,3 +1,4 @@
+import { GameAnalytics, GameInfo } from '@freestuffbot/typings';
 export declare type FreeStuffApiSettings = ({
     type?: 'basic';
 } | {
@@ -30,92 +31,6 @@ export interface RawApiResponse {
     _headers: Object;
     _status: number;
 }
-export interface LocalizedGameInfo {
-    lang_name: string;
-    lang_name_en: string;
-    lang_flag_emoji: string;
-    platform: string;
-    claim_long: string;
-    claim_short: string;
-    free: string;
-    header: string;
-    footer: string;
-    org_price_eur: string;
-    org_price_usd: string;
-    until: string;
-    until_alt: string;
-    flags: string[];
-}
-export interface GameInfo {
-    id: number;
-    urls: {
-        default: string;
-        browser: string;
-        client?: string;
-        org: string;
-    };
-    title: string;
-    org_price: {
-        euro: number;
-        usd: number;
-        [currency: string]: number;
-    };
-    price: {
-        euro: number;
-        usd: number;
-        [currency: string]: number;
-    };
-    thumbnail: {
-        org: string;
-        blank: string;
-        full: string;
-        tags: string;
-    };
-    kind: ProductKind;
-    tags: string[];
-    description: string;
-    rating?: number;
-    notice?: string;
-    until: Date;
-    store: Store;
-    flags: GameFlags;
-    type: AnnouncementType;
-    store_meta: {
-        steam_subids: string;
-    };
-    localized?: {
-        'en-US': LocalizedGameInfo;
-        [key: string]: LocalizedGameInfo;
-    };
-}
-export declare enum GameFlag {
-    TRASH = 1,
-    THIRDPARTY = 2
-}
-/** @see GameFlag */
-export declare type GameFlags = number;
-export declare type Store = 'steam' | 'epic' | 'humble' | 'gog' | 'origin' | 'uplay' | 'twitch' | 'itch' | 'discord' | 'apple' | 'google' | 'switch' | 'ps' | 'xbox' | 'other';
-export declare type AnnouncementType = 'free' | 'weekend' | 'discount' | 'ad' | 'unknown';
-export declare type ProductKind = 'game' | 'dlc' | 'software' | 'art' | 'ost' | 'book' | 'other';
-export interface GameAnalytics {
-    discord: GameAnalyticsDiscord;
-    telegram: GameAnalyticsTelegram;
-}
-export interface GameAnalyticsDiscord {
-    reach: number;
-    clicks: number;
-}
-export interface GameAnalyticsTelegram {
-    reach: {
-        users: number;
-        groups: number;
-        supergroups: number;
-        groupUsers: number;
-        channels: number;
-        channelUsers: number;
-    };
-    clicks: number;
-}
 export declare class FreeStuffApi {
     private settings;
     constructor(settings: FreeStuffApiSettings);
@@ -139,18 +54,7 @@ export declare class FreeStuffApi {
         [id: string]: GameInfo;
     }>;
     /** @access PARTNER ONLY */
-    getGameDetails(games: number[], lookup: 'analytics', settings?: any, useCache?: boolean): Promise<{
-        [id: string]: GameAnalytics;
-    }>;
-    /** @access PARTNER ONLY */
-    getGameDetails(games: number[], lookup: 'all', settings?: any, useCache?: boolean): Promise<{
-        [id: string]: any;
-    }>;
-    /** @access PARTNER ONLY */
-    postStatus(service: string, status: 'ok' | 'partial' | 'offline' | 'rebooting' | 'fatal', data?: any, version?: string, servername?: string, suid?: string): Promise<RawApiResponse>;
-    /** @access PARTNER ONLY */
-    postGameAnalytics(game: number, service: 'discord', data: GameAnalyticsDiscord): Promise<RawApiResponse>;
-    postGameAnalytics(game: number, service: 'telegram', data: GameAnalyticsTelegram): Promise<RawApiResponse>;
+    postGameAnalytics(game: number, service: 'discord', data: GameAnalytics['discord']): Promise<RawApiResponse>;
     postGameAnalytics(game: number, service: string, data: any): Promise<RawApiResponse>;
     private listener;
     on(event: 'webhook_test', handler: () => any): any;

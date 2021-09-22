@@ -9,9 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FreeStuffApi = exports.GameFlag = exports.PartnerEndpoint = exports.Endpoint = void 0;
+exports.FreeStuffApi = exports.PartnerEndpoint = exports.Endpoint = void 0;
 const axios_1 = require("axios");
-const os_1 = require("os");
 var Endpoint;
 (function (Endpoint) {
     Endpoint["PING"] = "GET /ping";
@@ -23,11 +22,6 @@ var PartnerEndpoint;
     PartnerEndpoint["STATUS"] = "POST /status";
     PartnerEndpoint["GAME_ANALYTICS"] = "POST /game/%s/analytics";
 })(PartnerEndpoint = exports.PartnerEndpoint || (exports.PartnerEndpoint = {}));
-var GameFlag;
-(function (GameFlag) {
-    GameFlag[GameFlag["TRASH"] = 1] = "TRASH";
-    GameFlag[GameFlag["THIRDPARTY"] = 2] = "THIRDPARTY";
-})(GameFlag = exports.GameFlag || (exports.GameFlag = {}));
 //#endregion
 class FreeStuffApi {
     //#region constructor
@@ -199,30 +193,9 @@ class FreeStuffApi {
             return out;
         });
     }
-    //#endregion
-    //#region POST status
-    /** @access PARTNER ONLY */
-    postStatus(service, status, data, version, servername, suid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.settings.type != 'partner')
-                throw new Error('FreeStuffApi Error. Tried using partner-only endpoint "postStatus" as non-partner.');
-            data = data || {};
-            servername = servername || (yield os_1.hostname());
-            suid = suid || this.settings.sid;
-            version = version || this.settings.version || 'unknown';
-            const body = {
-                data, suid, status, service, version,
-                server: servername
-            };
-            const res = yield this.makeRequest(PartnerEndpoint.STATUS, body);
-            if ((res === null || res === void 0 ? void 0 : res.data) && (res === null || res === void 0 ? void 0 : res.data['events']))
-                res.data['events'].forEach(e => this.emitRawEvent(e));
-            return res;
-        });
-    }
     postGameAnalytics(game, service, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.settings.type != 'partner')
+            if (this.settings.type !== 'partner')
                 throw new Error('FreeStuffApi Error. Tried using partner-only endpoint "postGameAnalytics" as non-partner.');
             const body = {
                 service,
@@ -256,7 +229,7 @@ class FreeStuffApi {
             case 'webhook_test':
                 this.emitEvent('webhook_test');
                 break;
-            default: orElse && orElse(event);
+            default: orElse === null || orElse === void 0 ? void 0 : orElse(event);
         }
     }
     webhook() {

@@ -1,5 +1,5 @@
+import { GameAnalytics, GameInfo } from '@freestuffbot/typings'
 import axios, { AxiosResponse } from 'axios'
-import { hostname } from "os"
 
 //#region TYPES
 
@@ -37,112 +37,6 @@ export interface RawApiResponse {
   data?: Array<any> | Object
   _headers: Object
   _status: number
-}
-
-export interface LocalizedGameInfo {
-  lang_name: string,
-  lang_name_en: string,
-  lang_flag_emoji: string,
-  platform: string,
-  claim_long: string,
-  claim_short: string,
-  free: string,
-  header: string,
-  footer: string,
-  org_price_eur: string,
-  org_price_usd: string,
-  until: string,
-  until_alt: string,
-  flags: string[]
-}
-
-export interface GameInfo {
-  id: number
-  urls: {
-    default: string,
-    browser: string,
-    client?: string,
-    org: string
-  }
-  title: string
-  org_price: {
-    euro: number
-    usd: number
-    gbp: number
-    brl: number
-    bgn: number
-    pln: number
-    huf: number
-    btc: number
-  }
-  price: {
-    euro: number
-    usd: number
-    gbp: number
-    brl: number
-    bgn: number
-    pln: number
-    huf: number
-    btc: number
-  }
-  thumbnail: {
-    org: string
-    blank: string
-    full: string
-    tags: string
-  }
-  kind: ProductKind
-  tags: string[]
-  description: string
-  rating?: number
-  notice?: string
-  until: Date
-  store: Store
-  flags: GameFlags
-  type: AnnouncementType
-  store_meta: {
-    steam_subids: string
-  },
-  localized?: {
-    'en-US': LocalizedGameInfo
-    [key: string]: LocalizedGameInfo
-  }
-}
-
-export enum GameFlag {
-  TRASH = 1 << 0, // Low quality game
-  THIRDPARTY = 1 << 1, // Third party key provider
-}
-
-/** @see GameFlag */
-export type GameFlags = number
-
-export type Store = 'steam' | 'epic' | 'humble' | 'gog' | 'origin' | 'uplay' | 'twitch' | 'itch' | 'discord' | 'apple' | 'google' | 'switch' | 'ps' | 'xbox' | 'other'
-
-export type AnnouncementType = 'free' | 'weekend' | 'discount' | 'ad' | 'unknown'
-
-export type ProductKind = 'game' | 'dlc' | 'software' | 'art' | 'ost' | 'book' | 'other'
-
-export interface GameAnalytics {
-  discord: GameAnalyticsDiscord
-  telegram: GameAnalyticsTelegram
-}
-
-export interface GameAnalyticsDiscord {
-  reach: number
-  clicks: number
-}
-
-export interface GameAnalyticsTelegram {
-  reach: {
-    users: number
-    groups: number
-    supergroups: number
-    groupUsers: number
-    channels: number
-    channelUsers: number
-  }
-  clicks: number
 }
 
 //#endregion
@@ -281,10 +175,6 @@ export class FreeStuffApi {
 
   /** @access PUBLIC */
   public async getGameDetails(games: number[], lookup: 'info', settings?: { language?: string[] }, useCache?: boolean): Promise<{ [id: string]: GameInfo }>
-  /** @access PARTNER ONLY */
-  public async getGameDetails(games: number[], lookup: 'analytics', settings?: any, useCache?: boolean): Promise<{ [id: string]: GameAnalytics }>
-  /** @access PARTNER ONLY */
-  public async getGameDetails(games: number[], lookup: 'all', settings?: any, useCache?: boolean): Promise<{ [id: string]: any }>
   public async getGameDetails(games: number[], lookup: 'info' | 'analytics' | 'all', settings: any = {}, useCache = true): Promise<{ [id: string]: any }> {
     const out = { } as any
     const query = { } as any
@@ -347,40 +237,14 @@ export class FreeStuffApi {
   }
 
   //#endregion
-  //#region POST status
 
-  /** @access PARTNER ONLY */
-  public async postStatus(service: string, status: 'ok' | 'partial' | 'offline' | 'rebooting' | 'fatal', data?: any, version?: string, servername?: string, suid?: string): Promise<RawApiResponse> {
-    if (this.settings.type != 'partner')
-      throw new Error('FreeStuffApi Error. Tried using partner-only endpoint "postStatus" as non-partner.')
-
-    data = data || {}
-    servername = servername || await hostname()
-    suid = suid || this.settings.sid
-    version = version || this.settings.version || 'unknown'
-
-    const body = {
-      data, suid, status, service, version,
-      server: servername
-    }
-
-    const res = await this.makeRequest(PartnerEndpoint.STATUS, body)
-
-    if (res?.data && res?.data['events'])
-      res.data['events'].forEach(e => this.emitRawEvent(e))
-
-    return res
-  }
-
-  //#endregion
   //#region POST game analytics
 
   /** @access PARTNER ONLY */
-  public async postGameAnalytics(game: number, service: 'discord', data: GameAnalyticsDiscord): Promise<RawApiResponse>
-  public async postGameAnalytics(game: number, service: 'telegram', data: GameAnalyticsTelegram): Promise<RawApiResponse>
+  public async postGameAnalytics(game: number, service: 'discord', data: GameAnalytics['discord']): Promise<RawApiResponse>
   public async postGameAnalytics(game: number, service: string, data: any): Promise<RawApiResponse>
   public async postGameAnalytics(game: number, service: string, data: any): Promise<RawApiResponse> {
-    if (this.settings.type != 'partner')
+    if (this.settings.type !== 'partner')
       throw new Error('FreeStuffApi Error. Tried using partner-only endpoint "postGameAnalytics" as non-partner.')
 
     const body = {
@@ -426,7 +290,7 @@ export class FreeStuffApi {
         this.emitEvent('webhook_test')
         break
 
-      default: orElse && orElse(event)
+      default: orElse?.(event)
     }
   }
 
