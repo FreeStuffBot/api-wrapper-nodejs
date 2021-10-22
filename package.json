@@ -1,6 +1,6 @@
 {
   "name": "freestuff",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "An API wrapper for the FreeStuff API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@freestuffbot/typings": "^1.1.1",
     "axios": "^0.21.1"
   },
   "devDependencies": {

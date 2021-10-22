@@ -1,4 +1,4 @@
-import { GameAnalytics, GameInfo } from '@freestuffbot/typings'
+import { GameAnalytics, GameInfo } from './games'
 import axios, { AxiosResponse } from 'axios'
 
 //#region TYPES
