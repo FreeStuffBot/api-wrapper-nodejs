@@ -153,5 +153,5 @@ fsapi.on('free_games', async games => {
 })
 
 server.use(express.json())
-server.get('/websocket/', fsapi.websocket())
+server.post('/websocket', fsapi.websocket())
 ```
