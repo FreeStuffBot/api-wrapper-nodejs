@@ -48,7 +48,7 @@ function parseResolvedAnnouncement(announcement: Record<string, unknown>): Resol
 
 const epochBegin = new Date('2025-01-01T00:00:00Z').getTime()
 
-function parseEpochTimestamp(timestamp: unknown): Date | null {
+export function parseEpochTimestamp(timestamp: unknown): Date | null {
   const asNumber = Number(timestamp);
   if (isNaN(asNumber) || asNumber < 0) {
     return null;

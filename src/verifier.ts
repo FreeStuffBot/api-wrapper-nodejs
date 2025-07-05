@@ -1,4 +1,5 @@
 import { createPublicKey, verify, type KeyObject } from 'node:crypto';
+import { parseEpochTimestamp } from './parser'
 
 
 export type VerifierOptions = {
@@ -82,8 +83,8 @@ export function newSignedMessageVerifier(options: VerifierOptions) {
       };
     }
 
-    const asDate = new Date(input.timestamp);
-    if (!skipTimestampCheck && (isNaN(asDate.getTime()) || isDateOlderThanMaxAge(asDate))) {
+    const asDate = parseEpochTimestamp(input.timestamp);
+    if (!skipTimestampCheck && (!asDate || isNaN(asDate.getTime()) || isDateOlderThanMaxAge(asDate))) {
       return {
         success: false,
         status: 'invalid-timestamp',
