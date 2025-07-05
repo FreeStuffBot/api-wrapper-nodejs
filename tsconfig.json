@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2016",
+    "target": "esnext",
     "outDir": "dist",
+    "rootDir": "src",
     "declaration": true,
     "lib": [
-      "es2016",
+      "esnext",
       "dom"
     ],
+    "resolveJsonModule": true,
     "sourceMap": true,
     "types": [
-      "node",
-      "reflect-metadata"
+      "node"
     ],
     "typeRoots": [
       "node_modules/@types"
@@ -22,6 +23,6 @@
     "emitDecoratorMetadata": true
   },
   "include": [
-    "./src/**/*"
+    "./src/index.ts"
   ]
 }

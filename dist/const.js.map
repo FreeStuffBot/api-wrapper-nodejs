@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": ["../src/const.ts"],
+  "sourcesContent": [
+    "import { version as packageVersion } from '../package.json' with { type: 'json' };\n\nexport const getCompatibility = () => '2025-07-01';\nexport const getUa = () => `freestuff-js/${packageVersion ?? 'unknown'} (https://docs.freestuffbot.xyz/libraries/node/)`;\n"
+  ],
+  "mappings": ";;;;AAEO,IAAM,mBAAmB,MAAM;AAC/B,IAAM,QAAQ,MAAM,gBAAgB,WAAkB;",
+  "debugId": "71D6DFE0B7CDF2A464756E2164756E21",
+  "names": []
+}

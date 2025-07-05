@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": ["../src/events.ts"],
+  "sourcesContent": [
+    "import * as EventEmitter from 'node:events';\nimport { FsbEvent } from './types';\n\n\ntype EventType = FsbEvent['type'];\n\nexport type Listener<T extends EventType> = (event: FsbEvent & { type: T }) => any;\n\nconst emitter = new EventEmitter();\n\nexport function on<T extends EventType>(event: T, listener: Listener<T>) {\n  emitter.on(event, listener);\n}\n\nexport function once<T extends EventType>(event: T, listener: Listener<T>) {\n  emitter.once(event, listener);\n}\n\nexport function off<T extends EventType>(event: T, listener: Listener<T>) {\n  emitter.off(event, listener);\n}\n\nexport function emit(event: FsbEvent) {\n  emitter.emit(event.type, event);\n}\n"
+  ],
+  "mappings": ";AAAA;AAQA,IAAM,UAAU,IAAI;AAEb,SAAS,EAAuB,CAAC,OAAU,UAAuB;AAAA,EACvE,QAAQ,GAAG,OAAO,QAAQ;AAAA;AAGrB,SAAS,IAAyB,CAAC,OAAU,UAAuB;AAAA,EACzE,QAAQ,KAAK,OAAO,QAAQ;AAAA;AAGvB,SAAS,GAAwB,CAAC,OAAU,UAAuB;AAAA,EACxE,QAAQ,IAAI,OAAO,QAAQ;AAAA;AAGtB,SAAS,IAAI,CAAC,OAAiB;AAAA,EACpC,QAAQ,KAAK,MAAM,MAAM,KAAK;AAAA;",
+  "debugId": "13159959F9C53AF264756E2164756E21",
+  "names": []
+}

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": ["../src/bitfield.ts"],
+  "sourcesContent": [
+    "\n\nexport type Bitfield<Items extends string> = {\n  has: (item: Items) => boolean;\n  add: (item: Items) => void;\n  remove: (item: Items) => void;\n  toggle: (item: Items) => void;\n  getBits: () => number;\n  toString: () => string;\n  toArray: () => Items[];\n  size: () => number;\n  [Symbol.iterator]: () => IterableIterator<Items>;\n}\n\nexport function createBitfield<Items extends string>(from: number, model: Record<Items, number>): Bitfield<Items> {\n  let local = from;\n\n  const iterate = function* () {\n    for (const item of Object.keys(model) as Items[]) {\n      if (local & model[item]) {\n        yield item;\n      }\n    }\n  };\n\n  return {\n    has: (item) => (local & model[item]) !== 0,\n    add: (item) => void (local |= model[item]),\n    remove: (item) => void (local &= ~model[item]),\n    toggle: (item) => void (local ^= model[item]),\n    getBits: () => local,\n    toString : () => [ ...iterate() ].join(', '),\n    toArray : () => [ ...iterate() ],\n    size: () => [ ...iterate() ].length,\n    [Symbol.iterator]: () => iterate(),\n  };\n}\n"
+  ],
+  "mappings": ";AAcO,SAAS,cAAoC,CAAC,MAAc,OAA+C;AAAA,EAChH,IAAI,QAAQ;AAAA,EAEZ,MAAM,UAAU,UAAU,GAAG;AAAA,IAC3B,WAAW,QAAQ,OAAO,KAAK,KAAK,GAAc;AAAA,MAChD,IAAI,QAAQ,MAAM,OAAO;AAAA,QACvB,MAAM;AAAA,MACR;AAAA,IACF;AAAA;AAAA,EAGF,OAAO;AAAA,IACL,KAAK,CAAC,UAAU,QAAQ,MAAM,WAAW;AAAA,IACzC,KAAK,CAAC,SAAS,MAAM,SAAS,MAAM;AAAA,IACpC,QAAQ,CAAC,SAAS,MAAM,UAAU,MAAM;AAAA,IACxC,QAAQ,CAAC,SAAS,MAAM,SAAS,MAAM;AAAA,IACvC,SAAS,MAAM;AAAA,IACf,UAAW,MAAM,CAAE,GAAG,QAAQ,CAAE,EAAE,KAAK,IAAI;AAAA,IAC3C,SAAU,MAAM,CAAE,GAAG,QAAQ,CAAE;AAAA,IAC/B,MAAM,MAAM,CAAE,GAAG,QAAQ,CAAE,EAAE;AAAA,KAC5B,OAAO,WAAW,MAAM,QAAQ;AAAA,EACnC;AAAA;",
+  "debugId": "61E82695F1FB45DA64756E2164756E21",
+  "names": []
+}
