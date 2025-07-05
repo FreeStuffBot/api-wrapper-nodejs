@@ -18,10 +18,10 @@ export class RestApiClient {
   private headers: Record<string, string> = {}
 
   constructor(
-    readonly token: string,
-    readonly options: Options,
+    token: string,
+    options?: Options,
   ) {
-    this.baseUrl = options.baseUrl || defaultOptions.baseUrl;
+    this.baseUrl = options?.baseUrl || defaultOptions.baseUrl;
     this.headers['Authorization'] = `Bearer ${token}`;
     this.headers['User-Agent'] = getUa();
     this.headers['Content-Type'] = 'application/json';
