@@ -47,7 +47,6 @@ function parseResolvedAnnouncement(announcement: Record<string, unknown>): Resol
 }
 
 const epochBegin = new Date('2025-01-01T00:00:00Z').getTime()
-
 export function parseEpochTimestamp(timestamp: unknown): Date | null {
   const asNumber = Number(timestamp);
   if (isNaN(asNumber) || asNumber < 0) {
@@ -62,6 +61,6 @@ export function parseEvent(event: Record<string, unknown>): FsbEvent {
   } else if (event.type as string === 'fsb:event:announcement_created') {
     event.data = parseResolvedAnnouncement(event.data as Record<string, unknown>);
   }
-  event.timestamp = parseEpochTimestamp(event.timestamp);
+  event.timestamp = new Date(String(event.timestamp));
   return event as FsbEvent;
 }

@@ -21,9 +21,9 @@ export function createExpressHandler(pubkey: string | KeyObject, options?: Expre
 
   return (req: Request, res: Response, next: NextFunction) => {
     rawParser(req, res, (err) => {
-      res.setHeader('X-Set-Compatibility-Date', getCompatibility());
-      res.setHeader('X-Client-Library', getUa());
-      
+      res.header('X-Set-Compatibility-Date', getCompatibility());
+      res.header('X-Client-Library', getUa());
+
       if (err) {
         return void res.status(500).send('Error parsing request body');
       }
@@ -71,7 +71,7 @@ export function createExpressHandler(pubkey: string | KeyObject, options?: Expre
         return;
       }
 
-      emit(parseEvent(result.payloadJson))
+      emit(parseEvent(result.payloadJson));
     });
   };
 }
