@@ -14,7 +14,7 @@ class RestApiClient {
     this.options = options;
     this.baseUrl = options.baseUrl || defaultOptions.baseUrl;
     this.headers["Authorization"] = `Bearer ${token}`;
-    this.headers["User-Agent"] = "freestuff-js/2.0.0-rc.6 (https://docs.freestuffbot.xyz/libraries/node/)";
+    this.headers["User-Agent"] = "freestuff-js/2.0.0-rc.7 (https://docs.freestuffbot.xyz/libraries/node/)";
     this.headers["Content-Type"] = "application/json";
     this.headers["X-Set-Compatibility-Date"] = "2025-07-01";
   }
@@ -208,13 +208,21 @@ function parseResolvedAnnouncement(announcement) {
   announcement.resolvedProducts = announcement.resolvedProducts.map(parseProduct);
   return announcement;
 }
+var epochBegin = new Date("2025-01-01T00:00:00Z").getTime();
+function parseEpochTimestamp(timestamp) {
+  const asNumber = Number(timestamp);
+  if (isNaN(asNumber) || asNumber < 0) {
+    return null;
+  }
+  return new Date(epochBegin + asNumber * 1000);
+}
 function parseEvent(event) {
   if (event.type === "fsb:event:product_updated") {
     event.data = parseProduct(event.data);
   } else if (event.type === "fsb:event:announcement_created") {
     event.data = parseResolvedAnnouncement(event.data);
   }
-  event.timestamp = new Date(event.timestamp);
+  event.timestamp = parseEpochTimestamp(event.timestamp);
   return event;
 }
 
@@ -228,7 +236,7 @@ function createExpressHandler(pubkey, options) {
   return (req, res, next) => {
     rawParser(req, res, (err) => {
       res.setHeader("X-Set-Compatibility-Date", "2025-07-01");
-      res.setHeader("X-Client-Library", "freestuff-js/2.0.0-rc.6 (https://docs.freestuffbot.xyz/libraries/node/)");
+      res.setHeader("X-Client-Library", "freestuff-js/2.0.0-rc.7 (https://docs.freestuffbot.xyz/libraries/node/)");
       if (err) {
         return void res.status(500).send("Error parsing request body");
       }
@@ -287,5 +295,5 @@ export {
   RestApiClient
 };
 
-//# debugId=B382A492352D292164756E2164756E21
+//# debugId=D3387073EE6FDBD564756E2164756E21
 //# sourceMappingURL=index.js.map

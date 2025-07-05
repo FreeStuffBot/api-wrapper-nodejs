@@ -46,12 +46,22 @@ function parseResolvedAnnouncement(announcement: Record<string, unknown>): Resol
   return announcement as ResolvedAnnouncement;
 }
 
+const epochBegin = new Date('2025-01-01T00:00:00Z').getTime()
+
+function parseEpochTimestamp(timestamp: unknown): Date | null {
+  const asNumber = Number(timestamp);
+  if (isNaN(asNumber) || asNumber < 0) {
+    return null;
+  }
+  return new Date(epochBegin + asNumber * 1000);
+}
+
 export function parseEvent(event: Record<string, unknown>): FsbEvent {
   if (event.type as string === 'fsb:event:product_updated') {
     event.data = parseProduct(event.data as Record<string, unknown>);
   } else if (event.type as string === 'fsb:event:announcement_created') {
     event.data = parseResolvedAnnouncement(event.data as Record<string, unknown>);
   }
-  event.timestamp = new Date(event.timestamp as string);
+  event.timestamp = parseEpochTimestamp(event.timestamp);
   return event as FsbEvent;
 }
