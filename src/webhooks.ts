@@ -8,8 +8,10 @@ import { emit } from './events';
 import { parseEvent } from './parser';
 
 
+type ExpressOptions = Partial<Omit<VerifierOptions, 'publicKey'> & { debug?: boolean; }>
+
 /** Add freestuff webhooks to any existing express app */
-export function createExpressHandler(pubkey: string | KeyObject, options?: Partial<Omit<VerifierOptions, 'publicKey'>>) {
+export function createExpressHandler(pubkey: string | KeyObject, options?: ExpressOptions) {
   const verifier = newSignedMessageVerifier({
     publicKey: pubkey,
     ...(options ?? {}),
@@ -42,6 +44,16 @@ export function createExpressHandler(pubkey: string | KeyObject, options?: Parti
         timestamp: String(req.headers['webhook-timestamp']),
       });
 
+      if (options?.debug) {
+        console.log('in>', {
+          data: req.body,
+          signature: String(req.headers['webhook-signature']),
+          messageId: String(req.headers['webhook-id']),
+          timestamp: String(req.headers['webhook-timestamp']),
+        });
+        console.log('out>', result);
+      }
+
       if (!result.success) {
         return void res.status(400).send(`Verification failed: ${result.status}`);
       }
@@ -65,7 +77,7 @@ export function createExpressHandler(pubkey: string | KeyObject, options?: Parti
 }
 
 /** Let us create an express server for you and already register everything you need. */
-export function createExpressServer(options: VerifierOptions & { port?: number, route?: string }) {
+export function createExpressServer(options: VerifierOptions & { port?: number, route?: string, debug?: boolean }) {
   const handler = createExpressHandler(options.publicKey, options);
   const app = express();
   if (options.route) {

@@ -120,7 +120,7 @@ export function newSignedMessageVerifier(options: VerifierOptions) {
     }
 
     const sigBuff = Buffer.from(sigB64!, 'base64');
-    const contentBuff = Buffer.from(`$Sinput.messageId}.${input.timestamp}.${input.data.toString()}`, 'utf8');
+    const contentBuff = Buffer.from(`${input.messageId}.${input.timestamp}.${input.data.toString()}`, 'utf8');
 
     const valid = verify(null, new Uint8Array(contentBuff), key, sigBuff);
     if (!valid) {
