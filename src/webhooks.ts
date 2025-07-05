@@ -37,8 +37,8 @@ export function createExpressHandler(pubkey: string | KeyObject, options?: Parti
 
       const result = verifier({
         data: req.body,
-        signature: String(req.headers['webhook-id']),
-        messageId: String(req.headers['webhook-signature']),
+        signature: String(req.headers['webhook-signature']),
+        messageId: String(req.headers['webhook-id']),
         timestamp: String(req.headers['webhook-timestamp']),
       });
 
