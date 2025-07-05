@@ -2,7 +2,7 @@ import { getCompatibility, getUa } from './const' with { type: 'macro' };
 
 import type { Request, Response, NextFunction } from 'express';
 import type { KeyObject } from 'node:crypto';
-import * as express from 'express';
+import express, { raw } from 'express';
 import { newSignedMessageVerifier, type VerifierOptions } from './verifier';
 import { emit } from './events';
 import { parseEvent } from './parser';
@@ -15,7 +15,7 @@ export function createExpressHandler(pubkey: string | KeyObject, options?: Parti
     ...(options ?? {}),
   });
 
-  const rawParser = express.raw({ type: '*/*' });
+  const rawParser = raw({ type: '*/*' });
 
   return (req: Request, res: Response, next: NextFunction) => {
     rawParser(req, res, (err) => {

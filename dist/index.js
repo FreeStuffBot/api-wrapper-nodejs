@@ -14,7 +14,7 @@ class RestApiClient {
     this.options = options;
     this.baseUrl = options.baseUrl || defaultOptions.baseUrl;
     this.headers["Authorization"] = `Bearer ${token}`;
-    this.headers["User-Agent"] = "freestuff-js/2.0.0-rc.4 (https://docs.freestuffbot.xyz/libraries/node/)";
+    this.headers["User-Agent"] = "freestuff-js/2.0.0-rc.6 (https://docs.freestuffbot.xyz/libraries/node/)";
     this.headers["Content-Type"] = "application/json";
     this.headers["X-Set-Compatibility-Date"] = "2025-07-01";
   }
@@ -168,7 +168,7 @@ function newSignedMessageVerifier(options) {
   };
 }
 // src/webhooks.ts
-import * as express from "express";
+import express, { raw } from "express";
 
 // src/parser.ts
 var productFlags = {
@@ -224,11 +224,11 @@ function createExpressHandler(pubkey, options) {
     publicKey: pubkey,
     ...options ?? {}
   });
-  const rawParser = express.raw({ type: "*/*" });
+  const rawParser = raw({ type: "*/*" });
   return (req, res, next) => {
     rawParser(req, res, (err) => {
       res.setHeader("X-Set-Compatibility-Date", "2025-07-01");
-      res.setHeader("X-Client-Library", "freestuff-js/2.0.0-rc.4 (https://docs.freestuffbot.xyz/libraries/node/)");
+      res.setHeader("X-Client-Library", "freestuff-js/2.0.0-rc.6 (https://docs.freestuffbot.xyz/libraries/node/)");
       if (err) {
         return void res.status(500).send("Error parsing request body");
       }
@@ -287,5 +287,5 @@ export {
   RestApiClient
 };
 
-//# debugId=2CD0C53EEE2FCBF464756E2164756E21
+//# debugId=B382A492352D292164756E2164756E21
 //# sourceMappingURL=index.js.map
