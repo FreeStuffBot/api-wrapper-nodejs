@@ -1,4 +1,4 @@
-import * as EventEmitter from 'node:events';
+import { EventEmitter } from 'node:events';
 import { FsbEvent } from './types';
 
 
