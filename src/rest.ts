@@ -1,6 +1,6 @@
 import { getCompatibility, getUa } from './const' with { type: 'macro' };
 
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { FsbStaticApiV2EventList, FsbStaticApiV2ProblemList, FsbStaticApiV2Schema, FsbStaticApiV2SchemaList } from './types';
 
 
@@ -14,54 +14,36 @@ const defaultOptions: Options = {
 
 export class RestApiClient {
 
-  private baseUrl: string;
-  private headers: Record<string, string> = {}
+  private client: AxiosInstance;
 
   constructor(
     token: string,
     options?: Options,
   ) {
-    this.baseUrl = options?.baseUrl || defaultOptions.baseUrl;
-    this.headers['Authorization'] = `Bearer ${token}`;
-    this.headers['User-Agent'] = getUa();
-    this.headers['Content-Type'] = 'application/json';
-    this.headers['X-Set-Compatibility-Date'] = getCompatibility();
+    this.client = axios.create({
+      baseURL: options?.baseUrl || defaultOptions.baseUrl,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'User-Agent': getUa(),
+        'Content-Type': 'application/json',
+        'X-Set-Compatibility-Date': getCompatibility(),
+      },
+    });
   }
 
   public getPing() {
-    return axios({
-      method: 'GET',
-      headers: this.headers,
-      baseURL: this.baseUrl,
-      url: '/ping',
-    })
+    return this.client.get('/ping')
   }
 
   public readonly static = {
-    getSchemas() {
-      return axios.get<FsbStaticApiV2SchemaList>('/schemas', {
-        headers: this.headers,
-        baseURL: this.baseUrl,
-      })
-    },
-    getSchema(urn: string) {
-      return axios.get<FsbStaticApiV2Schema>(`/schemas/${urn}`, {
-        headers: this.headers,
-        baseURL: this.baseUrl,
-      })
-    },
-    getProblems() {
-      return axios.get<FsbStaticApiV2ProblemList>('/problems', {
-        headers: this.headers,
-        baseURL: this.baseUrl,
-      })
-    },
-    getEvents() {
-      return axios.get<FsbStaticApiV2EventList>('/events', {
-        headers: this.headers,
-        baseURL: this.baseUrl,
-      })
-    },
+    getSchemas: () => this.client
+      .get<FsbStaticApiV2SchemaList>('/schemas'),
+    getSchema: (urn: string) => this.client
+      .get<FsbStaticApiV2Schema>(`/schemas/${urn}`),
+    getProblems: () => this.client
+      .get<FsbStaticApiV2ProblemList>('/problems'),
+    getEvents: () => this.client
+      .get<FsbStaticApiV2EventList>('/events'),
   }
 
 }
