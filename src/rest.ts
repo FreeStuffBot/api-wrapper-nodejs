@@ -37,13 +37,13 @@ export class RestApiClient {
 
   public readonly static = {
     getSchemas: () => this.client
-      .get<FsbStaticApiV2SchemaList>('/schemas'),
+      .get<FsbStaticApiV2SchemaList>('/static/schemas'),
     getSchema: (urn: string) => this.client
-      .get<FsbStaticApiV2Schema>(`/schemas/${urn}`),
+      .get<FsbStaticApiV2Schema>(`/static/schemas/${urn}`),
     getProblems: () => this.client
-      .get<FsbStaticApiV2ProblemList>('/problems'),
+      .get<FsbStaticApiV2ProblemList>('/static/problems'),
     getEvents: () => this.client
-      .get<FsbStaticApiV2EventList>('/events'),
+      .get<FsbStaticApiV2EventList>('/static/events'),
   }
 
 }
