@@ -23,7 +23,6 @@ function handleError(err: any): never {
   }
 
   if (err.response) {
-    console.error('API Error:', err.response.status, err.response.data);
     if (err.response.data
       && typeof err.response.data === 'object'
       && err.response.data.type
