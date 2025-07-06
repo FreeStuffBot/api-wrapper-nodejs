@@ -4,7 +4,7 @@ export class Problem extends Error {
 
   public readonly type: string;
   public readonly title: string;
-  public readonly detail: number;
+  public readonly detail: string;
 
   constructor(
     public readonly raw: Record<string, unknown>,
@@ -12,7 +12,7 @@ export class Problem extends Error {
     super();
     this.type = String(raw.type ?? 'fsb:problem:unknown');
     this.title = String(raw.title ?? 'Unknown Problem');
-    this.detail = Number(raw.detail ?? 'An unknown error occurred');
+    this.detail = String(raw.detail ?? 'An unknown error occurred');
   }
 
 }
