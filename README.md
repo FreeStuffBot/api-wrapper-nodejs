@@ -1,157 +1,78 @@
 # FreeStuff API Wrapper
 
-This is the official NodeJS API wrapper for the FreeStuff API. For more information see https://docs.freestuffbot.xyz/
+This is the official Node+Bun API wrapper for the FreeStuff API. For more information see https://docs.freestuffbot.xyz/
 
-## Docs
+## Install
 
-> This api wrapper has typescript typings included. Your editor should show smart tooltips and autocomplete even if you are using vanilla javascript.
-
-First, import the api using
-```js
-import { FreeStuffApi } from "freestuff"
-// or
-const { FreeStuffApi } = require('freestuff')
+```bash
+npm install freestuff
 ```
 
-Then you're ready to create a new connection to the api
-```js
-const fsapi = new FreeStuffApi({
-  key: 'key here'
-})
+or
+
+```bash
+bun install freestuff
 ```
 
-The object passed to the api in the example above can take more parameters, all of which are optionally:
-```js
-const fsapi = new FreeStuffApi({
-  key: 'key here', // plain key without "Basic" or other prefixes
-  baseUrl: 'https://url.to.api/', // only used for debugging
-  websocketSecret: '', // websocket secret that gets matched if you're using the inbuilt express.js middleware
-  cacheTtl: { // cache duration for the specific endpoints in ms
-    gameList: 1000,
-    gameDetails: 1000
-  }
-})
+## How to use
+
+Start a simple express server to receive webhooks
+
+```ts
+import { createExpressServer, on } from 'freestuff';
+
+on('fsb:event:ping', event => {
+  console.log(ping);
+});
+
+createExpressServer({ publicKey: 'YOUR PUBLIC KEY HERE' })
+  .then(({ port }) => console.log(`Server is running on port ${port}`));
 ```
 
-To get all current free games use
-```js
-const games = await fsapi.getGameList('free')
-// games = [ 1234, 12345 ]
+Or add to an existing express server
+
+```ts
+import express from 'express';
+import { createExpressHandler, on } from 'freestuff';
+
+on('fsb:event:ping', event => {
+  console.log(event);
+});
+
+const app = express();
+app.use('/api/freestuff-webhook-route', createExpressHandler('YOUR PUBLIC KEY HERE'));
+app.listen(3000);
 ```
 
-This method will only return the game ids. To get information about the games with those ids you'll need to run the following method:
+Or verify webhooks manually for use with other frameworks
 
-```js
-const games = [ 1234, 12345 ]
-const info = await fsapi.getGameDetails(games, 'info')
+```ts
+import { newSignedMessageVerifier } from 'freestuff';
+
+const verify = newSignedMessageVerifier({
+  publicKey: 'YOUR PUBLIC KEY HERE',
+  maxMessageAge: 1000 * 60 * 5
+});
+
+const { success, status, payloadJson } = verify({
+  data: Buffer.from('...'),
+  signature: '...',
+  messageId: '...',
+  timestamp: '...'
+});
 ```
 
-Alternatively you can also request locaized versions of the info by appending a language object:
+Or use the rest api client for typed responses, problem parsing and automatic compatibility dates
 
-```js
-const info = await fsapi.getGameDetails(games, 'info', {
-  language: [
-    'en-US',
-    'de-DE',
-    'pl'
-  ]
-})
-```
+```ts
+import { Problem, RestApiClient } from 'freestuff';
 
-The returned game info objects look like this:
+const client = new RestApiClient('fsb_api_token_here');
 
-```js
-GameInfo: {
-  id: number
-  url: string
-  org_url: string
-  title: string
-  org_price: {
-    euro: number
-    dollar: number
-  }
-  price: {
-    euro: number
-    dollar: number
-  }
-  thumbnail: {
-    org: string
-    blank: string
-    full: string
-    tags: string
-  }
-  kind: ProductKind
-  tags: string[]
-  description: string
-  rating?: number
-  notice?: string
-  until: Date
-  store: Store
-  flags: GameFlags
-  type: AnnouncementType
-  store_meta: {
-    steam_subids: string
-  },
-  localized?: {
-    'en-US': LocalizedGameInfo
-    [key: string]: LocalizedGameInfo
-  }
-}
-
-LocalizedGameInfo: {
-  lang_name: string,
-  lang_name_en: string,
-  lang_flag_emoji: string,
-  platform: string,
-  claim_long: string,
-  claim_short: string,
-  free: string,
-  header: string,
-  footer: string,
-  org_price_eur: string,
-  org_price_usd: string,
-  until: string,
-  until_alt: string,
-  flags: string[]
-}
-```
-
-For more info about the Object types see https://docs.freestuffbot.xyz/v1/types#gameinfo
-
-#### To subscribe to events you can use the api.on method:
-```js
-fsapi.on('free_games', games => {
-// games = [ 1234, 12345 ]
-})
-```
-
-In order to actually receive those events though, you have 3 options:
-* call emit event function manually:
-```js
-  fsapi.emitRawEvent({ event: 'free_games', data: [ 1234 ] })
-```
-* or use the express middleware if your server is running on express.js already:
-```js
-express.use(express.json())
-express.get('route/to/your/websocket/', fsapi.webhook())
-```
-* post status updates. only if you have partner privileges
-
-#### Full example of all the components above:
-
-```js
-const FreeStuffApi = require('freestuff')
-const fsapi = new FreeStuffApi({
-  key: 'sdjalsdkjlaksdjlkaj',
-  websocketSecret: 'cvmbnmncvbnm'
-})
-
-fsapi.on('free_games', async games => {
-  const info = await fsapi.getGameDetails(games, 'info', { language:['en-US' ] })
-
-  console.log(info)
-})
-
-server.use(express.json())
-server.post('/websocket', fsapi.websocket())
+client.static.getSchemas()
+  .then(({ list }) => console.log(list))
+  .catch(err => {
+    if (err instanceof Problem)
+      console.log(err.message, err.detail);
+  }),
 ```
